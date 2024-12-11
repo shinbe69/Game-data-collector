@@ -1,0 +1,18 @@
+services:
+  APP:
+    image: node:lts-alpine3.20
+    command: sh -c "npm i && npm run dev"
+    working_dir: /app
+    restart: always
+    volumes:
+      - ./:/app
+    ports:
+      - 3000:3000
+
+  DB:
+    image: mongo:7.0.5-jammy
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_DATABASE: gamedb

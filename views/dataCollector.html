@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nhập thông tin</title>
+        <style>
+            body {
+                height: 100vh;
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+                display: flex;
+            }
+            form {
+                width: 40%;
+                margin: auto;
+                box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+                padding: 2em;
+            }
+            label {
+                margin: auto;
+            }
+            h1 {
+                text-align: center;
+            }
+            input[type=submit] {
+                width: 6em;
+                height: 2em;
+                margin: auto;
+            }
+            #submitWrapper {
+                width: 100%;
+                display: flex;
+            }
+            textarea {
+                font-size: 1.3em;
+                resize: vertical;
+            }
+        </style>
+    </head>
+<body>
+
+    
+<form id="sendDataForm">
+    <h1>Nhập thông tin tình huống</h1>
+  <h3>1. Tình huống cụ thể:</h3>
+  <textarea rows="4" cols="60" id="fname" name="situation" placeholder="Nhập tình huống cụ thể..."></textarea>
+    <br>
+  <h3>2. Chọn câu trả lời đúng cho tình huống</h3>
+  <input type="radio" id="html" name="correct_answer" value="yes">
+  <label for="html">Vệ sinh tay</label><br>
+    <br>
+  <input type="radio" id="css" name="correct_answer" value="no">
+  <label for="css">Không vệ sinh tay</label><br>
+    <br>
+  <input type="radio" id="javascript" name="correct_answer" value="unnecessary">
+  <label for="javascript">Không cần thiết vệ sinh tay</label>
+    <br>
+    <br>
+  <div id="submitWrapper">
+    <input type="submit" value="OK">
+  </div>
+</form>
+
+</body>
+
+</html>
+<script>
+    document.getElementById('sendDataForm').addEventListener('submit', async (event) => {
+      event.preventDefault(); // Prevent the default form submission
+
+      if (event.target.situation.value === '' || event.target.correct_answer.value === undefined) alert('Vui lòng nhập đầy đủ thông tin!')
+      else {
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries()); // Convert FormData to an object
+        try {
+            const response = await fetch('http://localhost:3000/send-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+            });
+    
+            if (response.ok) {
+            const result = await response.json();
+            console.log('Success:', result);
+            alert('Data submitted successfully! 🎉');
+            } else {
+            console.error('Error:', response.statusText);
+            alert('Something went wrong 😢');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Could not connect to the API 🚨');
+        }
+    }
+    });
+  </script>
+  
