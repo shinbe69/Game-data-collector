@@ -49,7 +49,7 @@
               text-align: center;
             }
             hr {
-              height: 70%;
+              height: 80%;
               padding: 0;
               margin: auto 0;
             }
@@ -65,7 +65,7 @@
 <form id="sendDataForm">
     <h1>Nhập thông tin tình huống</h1>
   <h3>1. Tình huống cụ thể:</h3>
-  <textarea id="situation" name="situation" placeholder="Nhập tình huống cụ thể..."></textarea>
+  <textarea id="situation" name="situation" placeholder="Nhập chỉ định cụ thể..."></textarea>
     <br>
   <h3>2. Chọn câu trả lời đúng cho tình huống</h3>
   <input type="radio" id="html" name="correct_answer" value="yes">
@@ -89,7 +89,7 @@
 <script>
   $(document).ready(() => {
     console.log('Script ready...')
-    fetch('http://localhost:3000/data')
+    fetch('http://localhost:3002/list')
     .then(res => res.json())
     .then(res => {
       res.forEach(singleData => {
@@ -99,13 +99,12 @@
     .catch((err) => console.log('Error:', err))
     document.getElementById('sendDataForm').addEventListener('submit', async (event) => {
       event.preventDefault(); // Prevent the default form submission
-
-      if (event.target.situation.value === '' || event.target.correct_answer.value === undefined) alert('Vui lòng nhập đầy đủ thông tin!')
+      if (event.target.situation.value === '' || event.target.correct_answer.value === '') alert('Vui lòng nhập đầy đủ thông tin!')
       else {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries()); // Convert FormData to an object
         try {
-            const response = await fetch('http://localhost:3000/data', {
+            const response = await fetch('http://localhost:3002/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

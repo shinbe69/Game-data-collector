@@ -16,8 +16,13 @@ app.post('/data', async (req, res) => {
     else res.sendStatus(500)
 })
 
-app.get('/data', async (req, res) => {
+app.get('/list', async (req, res) => {
     let result = await Situation.find({})
+    res.json(result)
+})
+
+app.get('/data', async (req, res) => {
+    let result = await Situation.aggregate([{ $sample: { size: 1 } }])
     res.json(result)
 })
 
