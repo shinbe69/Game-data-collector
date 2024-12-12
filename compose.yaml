@@ -7,12 +7,17 @@ services:
     volumes:
       - ./:/app
     ports:
-      - 3000:3000
+      - 3002:3002
 
   DB:
     image: mongo:7.0.5-jammy
     restart: always
     ports:
       - 27017:27017
+    volumes:
+      - mongo-data:/data/db
     environment:
       MONGO_INITDB_ROOT_DATABASE: gamedb
+
+volumes:
+  mongo-data:

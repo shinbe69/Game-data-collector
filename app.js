@@ -10,10 +10,15 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/dataCollector.html'))
 })
 
-app.post('/send-data', async (req, res) => {
-    console.log('data:', req.body)
+app.post('/data', async (req, res) => {
     let result = await Situation.create({ content: req.body.situation, correct_answer: req.body.correct_answer })
-    console.log(result)
+    if (result) res.json(result)
+    else res.sendStatus(500)
+})
+
+app.get('/data', async (req, res) => {
+    let result = await Situation.find({})
+    res.json(result)
 })
 
 isConnect
