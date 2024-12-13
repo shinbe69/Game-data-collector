@@ -92,7 +92,8 @@
     fetch('http://localhost:3002/list', {
       headers: {
         'Access-Control-Allow-Origin': '*'
-      }
+      },
+      mode: 'cors'
     })
     .then(res => res.json())
     .then(res => {
