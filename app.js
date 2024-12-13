@@ -1,10 +1,13 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const path = require('path')
 app.use(express.json())
 require('dotenv').config()
 const { isConnect } = require('./db/connectDB')
 const Situation = require('./models/Situation')
+
+app.use(cors())
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/dataCollector.html'))
