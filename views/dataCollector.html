@@ -89,12 +89,7 @@
 <script>
   $(document).ready(() => {
     console.log('Script ready...')
-    fetch('http://localhost:3002/list', {
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
-      mode: 'cors'
-    })
+    fetch('http://mrns.bvhungvuong.vn:3002/list')
     .then(res => res.json())
     .then(res => {
       res.forEach(singleData => {
@@ -109,11 +104,10 @@
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries()); // Convert FormData to an object
         try {
-            const response = await fetch('http://localhost:3002/data', {
+            const response = await fetch('http://mrns.bvhungvuong.vn:3002/data', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(data),
             });
