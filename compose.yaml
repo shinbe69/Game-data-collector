@@ -1,0 +1,25 @@
+services:
+  api:
+    image: node:21-alpine3.18
+    command: sh -c "npm i && npm run dev"
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - 3002:3002
+  db:
+    image: mongo:7.0.5-jammy
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+  SQLDB:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Imabelieber699&
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - 1433:1433

@@ -2,6 +2,7 @@ const express = require('express')
 const crypto = require('node:crypto')
 const router = express.Router()
 const {sql} = require('../db/connectDB')
+const Player = require('../models/Player')
 
 router.post('/login', async (req, res) => {
     let { username, password } = req.body
@@ -32,6 +33,18 @@ router.post('/data', async (req, res) => {
     const {username} = req.body
     const player = await sql.query(`SELECT CONCAT(hoDem, ten) AS name, KhoaPhong.tenKhoa AS department FROM HoSoNhanVien INNER JOIN KhoaPhong ON HoSoNhanVien.khoaPhong = KhoaPhong.maKhoa WHERE maNhanVien = '${username}'`)
     res.json(player.recordset[0])
+})
+
+router.get('/update-staff', async (req, res) => {
+    const staffs = await sql.query(`SELECT maNhanVien AS staff_id, CONCAT(hoDem, ten) AS name, KhoaPhong.tenKhoa AS department
+        FROM HoSoNhanVien INNER JOIN KhoaPhong
+        ON khoaPhong = KhoaPhong.maKhoa`)
+    let countUpdated = 0
+    staffs.recordset.forEach(async (staff) => {
+        const playerCreating = await Player.create({staff_id: staff.staff_id, name: staff.name, department: staff.department})
+        if (playerCreating) countUpdated++
+    })
+    res.json({numberOfPlayerCreated: countUpdated})
 })
 
 router.get('/check-health', (req, res) => {

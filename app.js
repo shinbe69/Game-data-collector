@@ -4,7 +4,7 @@ const app = express()
 const path = require('path')
 app.use(express.json())
 require('dotenv').config()
-const { isConnected, sql } = require('./db/connectDB')
+const { isConnected, isConnectMongo, sql } = require('./db/connectDB')
 const router = require('./routing/router')
 
 app.use(cors())
@@ -18,11 +18,18 @@ app.get('/', (req, res) => {
 
 isConnected
 .then(() => {
-    console.log('*** Connected to the database! ***')
-    app.listen(process.env.PORT, process.env.HOST, () => {
-        console.log('*** API server is now ready at port', process.env.PORT, 'on', process.env.HOST, '***')
+    console.log('*** Connected to the SQL Server database! ***')
+    isConnectMongo
+    .then(() => {
+        console.log('*** Connected to the Mongo database! ***')
+        app.listen(process.env.PORT, process.env.HOST, () => {
+            console.log('*** API server is now ready at port', process.env.PORT, 'on', process.env.HOST, '***')
+        })
+    })
+    .catch(() => {
+        console.log('*** Connecting to the Mongo database fail! ***')
     })
 })
 .catch(() => {
-    console.log('*** Connecting to the database fail! ***')
+    console.log('*** Connecting to the SQL Server database fail! ***')
 })

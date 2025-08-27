@@ -1,11 +1,12 @@
 require('dotenv').config({ path: '../.env' })
-
+const mongoose = require('mongoose')
 const sql = require('mssql')
+
 const sqlConfig = {
-  user: "admin",
-  password: "CNPM@2023",
-  database: "HV_Nhansu",
-  server: "10.17.4.38",
+  user: "sa",
+  password: "Imabelieber699&",
+  database: "HV_Nhansu_Copy",
+  server: "SQLDB",
   pool: {
     max: 10,
     min: 0,
@@ -37,4 +38,10 @@ let isConnected = new Promise((resolve, reject) => {
     }, 3000)
 })
 
-module.exports = {isConnected, sql}
+let isConnectMongo = new Promise((resolve, reject) => {
+    mongoose.connect(process.env.DB_URI)
+    .then(() => resolve(true))
+    .catch(() => reject(false))
+})
+
+module.exports = {isConnected, isConnectMongo, sql}
