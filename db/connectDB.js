@@ -3,10 +3,10 @@ const mongoose = require('mongoose')
 const sql = require('mssql')
 
 const sqlConfig = {
-  user: "sa",
-  password: "Imabelieber699&",
-  database: "HV_Nhansu_Copy",
-  server: "SQLDB",
+  user: "admin",
+  password: "CNPM@2023",
+  database: "HV_Nhansu",
+  server: "10.17.4.38",
   pool: {
     max: 10,
     min: 0,

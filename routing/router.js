@@ -2,7 +2,10 @@ const express = require('express')
 const crypto = require('node:crypto')
 const router = express.Router()
 const {sql} = require('../db/connectDB')
+const { ObjectId } = require('mongodb')
 const Player = require('../models/Player')
+const Indication = require('../models/Indication')
+const IndicationType = require('../models/IndicationType')
 
 router.post('/login', async (req, res) => {
     let { username, password } = req.body
@@ -31,8 +34,8 @@ router.post('/login', async (req, res) => {
 
 router.post('/data', async (req, res) => {
     const {username} = req.body
-    const player = await sql.query(`SELECT CONCAT(hoDem, ten) AS name, KhoaPhong.tenKhoa AS department FROM HoSoNhanVien INNER JOIN KhoaPhong ON HoSoNhanVien.khoaPhong = KhoaPhong.maKhoa WHERE maNhanVien = '${username}'`)
-    res.json(player.recordset[0])
+    const player = await Player.find({staff_id: username})
+    res.json(player ? player[0] : null)
 })
 
 router.get('/update-staff', async (req, res) => {
@@ -40,13 +43,49 @@ router.get('/update-staff', async (req, res) => {
         FROM HoSoNhanVien INNER JOIN KhoaPhong
         ON khoaPhong = KhoaPhong.maKhoa`)
     let countUpdated = 0
-    staffs.recordset.forEach(async (staff) => {
-        const playerCreating = await Player.create({staff_id: staff.staff_id, name: staff.name, department: staff.department})
-        if (playerCreating) countUpdated++
-    })
+    for await (const staff of staffs.recordset) {
+        const player = await Player.find({staff_id: staff.staff_id})
+        if (player.length === 0) {
+            const playerCreating = await Player.create({staff_id: staff.staff_id, name: staff.name, department: staff.department})
+            if (playerCreating) countUpdated++
+        }
+    }
     res.json({numberOfPlayerCreated: countUpdated})
 })
-
+router.get('/indication', async (req, res) => {
+    const indications = await Indication.find({}).lean()
+    const indicationTypes = await IndicationType.find({})
+    for await (const indication of indications) {
+        const matchIndicationType = indicationTypes.find(item => item._id.equals(indication.type))
+        indication.type_name = matchIndicationType.type
+        indication.before = matchIndicationType.before
+        indication.after = matchIndicationType.after
+        indication.before_explain = matchIndicationType.before_explain
+        indication.after_explain = matchIndicationType.after_explain
+    }
+    res.json(indications)
+})
+router.post('/indication', async (req, res) => {
+    const {action, typeId} = req.body;
+    if (!action || !typeId) return res.sendStatus(400)
+    const indicationType = await IndicationType.findById(typeId)
+    if (indicationType.length == 0) res.sendStatus(400)
+    else {
+        const createResult = await Indication.create({action, type: typeId})
+        if (createResult) res.sendStatus(201)
+        else res.sendStatus(500)
+    }
+})
+router.post('/indication/type', async (req, res) => {
+    const {type, before, after, beforeExplain, afterExplain} = req.body
+    if (!type) res.sendStatus(400)
+    else {
+        //check valid later
+        const createIndicationType = await IndicationType.create({type, before, after, before_explain: beforeExplain, after_explain: afterExplain})
+        if (createIndicationType) res.sendStatus(201)
+        else res.sendStatus(500)
+    }
+})
 router.get('/check-health', (req, res) => {
     res.sendStatus(200)
 })

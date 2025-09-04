@@ -13,13 +13,13 @@ services:
     restart: unless-stopped
     ports:
       - 27017:27017
-  SQLDB:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Imabelieber699&
-    working_dir: /app
-    volumes:
-      - ./:/app
-    ports:
-      - 1433:1433
+  # SQLDB:
+  #   image: mcr.microsoft.com/mssql/server:2019-latest
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - MSSQL_SA_PASSWORD=Imabelieber699&
+  #   working_dir: /app
+  #   volumes:
+  #     - ./:/app
+  #   ports:
+  #     - 1433:1433
