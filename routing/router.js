@@ -32,6 +32,14 @@ router.post('/login', async (req, res) => {
     }
 })
 
+router.post('/data-from-form', async (req, res) => {
+    console.log(req.body.indication, req.body.indicationType, req.body.isDirty)
+
+    let result = await Indication.create({ action: req.body.indication, type: req.body.indicationType, isDirty: req.body.isDirty })
+    if (result) res.json(result)
+    else res.sendStatus(500)
+})
+
 router.post('/data', async (req, res) => {
     const {username} = req.body
     const player = await Player.find({staff_id: username})
@@ -51,6 +59,14 @@ router.get('/update-staff', async (req, res) => {
         }
     }
     res.json({numberOfPlayerCreated: countUpdated})
+})
+router.get('/indication-type', async (req, res) => {
+    const indicationType = await IndicationType.find({})
+    res.json(indicationType)
+})
+router.get('/simple-indication', async (req, res) => {
+    const indications = await Indication.find({})
+    res.json(indications)
 })
 router.get('/indication', async (req, res) => {
     const indications = await Indication.find({}).lean()

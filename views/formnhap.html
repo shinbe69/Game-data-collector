@@ -141,6 +141,9 @@
         label {
             margin: auto 0;
         }
+        #submitWrapper {
+            margin: 1em 0;
+        }
         /* Danh sách */
         /* Responsive */
         
@@ -166,26 +169,19 @@
 
         <!-- Form nhập -->
         <form id="sendDataForm">
-            <h1>Nhập thông tin tình huống</h1>
+            <h1>Nhập thông tin chỉ định</h1>
 
-            <h3>1. Chỉ định cụ thể:</h3>
-            <textarea id="situation" name="situation" placeholder="Nhập chỉ định cụ thể..."></textarea>
+            <h3>1. Tên chỉ định:</h3>
+            <textarea id="situation" name="indication" placeholder="Nhập chỉ định cụ thể..."></textarea>
 
-            <h3>2. Chọn câu trả lời đúng cho tình huống</h3>
-            <div class="radio-group">
-                <input type="radio" id="answer_yes" name="correct_answer" value="yes">
-                <label for="answer_yes">Vệ sinh tay</label>
+            <h3>2. Loại chỉ định</h3>
+            <div id="indicationTypeSection">
+
             </div>
 
-            <div class="radio-group">
-                <input type="radio" id="answer_no" name="correct_answer" value="no">
-                <label for="answer_no">Không vệ sinh tay</label>
-            </div>
-
-            <div class="radio-group">
-                <input type="radio" id="answer_unnecessary" name="correct_answer" value="unnecessary">
-                <label for="answer_unnecessary">Không cần thiết vệ sinh tay</label>
-            </div>
+            <h3>3. Sau khi thực hiện chỉ định, có yêu cầu vệ sinh lại khi thực hiện chỉ định khác trên cùng bệnh nhân không</h3>
+            <input type="checkbox" id="answer_unnecessary" name="isDirty" value="yes">
+            <label for="answer_unnecessary">Có</label>
 
             <div id="submitWrapper">
                 <input type="submit" value="OK">
@@ -199,22 +195,36 @@
 <script>
     $(document).ready(() => {
       console.log('Script ready...')
-      fetch('http://mrns.bvhungvuong.vn:3002/list')
+      fetch('http://10.17.4.61:3002/simple-indication')
       .then(res => res.json())
       .then(res => {
         res.forEach(singleData => {
-          $("ol").append(`<li><b>${singleData.content}</b></li>`)
+          $("ol").append(`<li><b>${singleData.action}</b></li>`)
         })
       })
       .catch((err) => console.log('Error:', err))
+      //Get indicationType
+      fetch('http://10.17.4.61:3002/indication-type')
+      .then(res => res.json())
+      .then(res => {
+        console.log(res)
+        res.forEach(singleData => {
+          $("#indicationTypeSection").append(`<div class="radio-group">
+                <input type="radio" name="indicationType" value="${singleData._id}">
+                <label>${singleData.type}</label>
+            </div>`)
+        })
+      })
+      .catch((err) => console.log('Error:', err))
+
     document.getElementById('sendDataForm').addEventListener('submit', async (event) => {
     event.preventDefault(); // Prevent the default form submission
-    if (event.target.situation.value === '' || event.target.correct_answer.value === '') alert('Vui lòng nhập đầy đủ thông tin!')
+    if (event.target.indication.value === '' || event.target.indicationType.value === '') alert('Vui lòng nhập đầy đủ thông tin!')
     else {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries()); // Convert FormData to an object
         try {
-            const response = await fetch('http://mrns.bvhungvuong.vn:3002/data', {
+            const response = await fetch('http://10.17.4.61:3002/data-from-form', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -226,7 +236,7 @@
             let result = await response.json();
             document.getElementById('situation').value = ''
             $('input[type=radio]').prop('checked',false);
-            $("ol").append(`<li><b>${result.content}</b></li>`)
+            $("ol").append(`<li><b>${result.action}</b></li>`)
             } else {
             console.error('Error:', response.statusText);
             alert('Something went wrong 😢');

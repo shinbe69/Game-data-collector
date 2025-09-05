@@ -5,6 +5,7 @@ const Schema = mongoose.Schema
 const Indication = new Schema({
     action: String,
     type: {type: ObjectId, ref: "IndicationType"},
+    isDirty: Boolean,
     createAt: { type: Date, default: Date.now }
 })
 
