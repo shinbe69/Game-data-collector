@@ -174,12 +174,12 @@
             <h3>1. Tên chỉ định:</h3>
             <textarea id="situation" name="indication" placeholder="Nhập chỉ định cụ thể..."></textarea>
 
-            <h3>2. Loại chỉ định</h3>
-            <div id="indicationTypeSection">
+            <h3>2. Loại chỉ định trước:</h3>
+            <div id="indicationTypeBeforeSection"></div>
+            <h3>2. Loại chỉ định sau:</h3>
+            <div id="indicationTypeAfterSection"></div>
 
-            </div>
-
-            <h3>3. Sau khi thực hiện chỉ định, có yêu cầu vệ sinh lại khi thực hiện chỉ định khác trên cùng bệnh nhân không</h3>
+            <h3>3. Sau khi thực hiện chỉ định, có yêu cầu vệ sinh lại khi thực hiện chỉ định khác trên cùng bệnh nhân không?</h3>
             <input type="checkbox" id="answer_unnecessary" name="isDirty" value="yes">
             <label for="answer_unnecessary">Có</label>
 
@@ -195,7 +195,7 @@
 <script>
     $(document).ready(() => {
       console.log('Script ready...')
-      fetch('http://10.17.4.61:3002/simple-indication')
+      fetch('http://localhost:3002/simple-indication')
       .then(res => res.json())
       .then(res => {
         res.forEach(singleData => {
@@ -204,13 +204,16 @@
       })
       .catch((err) => console.log('Error:', err))
       //Get indicationType
-      fetch('http://10.17.4.61:3002/indication-type')
+      fetch('http://localhost:3002/indication-type')
       .then(res => res.json())
       .then(res => {
-        console.log(res)
         res.forEach(singleData => {
-          $("#indicationTypeSection").append(`<div class="radio-group">
-                <input type="radio" name="indicationType" value="${singleData._id}">
+            $("#indicationTypeBeforeSection").append(`<div class="radio-group">
+                    <input type="radio" name="indicationTypeBefore" value="${singleData._id}">
+                    <label>${singleData.type}</label>
+                </div>`)
+            $("#indicationTypeAfterSection").append(`<div class="radio-group">
+                <input type="radio" name="indicationTypeAfter" value="${singleData._id}">
                 <label>${singleData.type}</label>
             </div>`)
         })
@@ -219,12 +222,12 @@
 
     document.getElementById('sendDataForm').addEventListener('submit', async (event) => {
     event.preventDefault(); // Prevent the default form submission
-    if (event.target.indication.value === '' || event.target.indicationType.value === '') alert('Vui lòng nhập đầy đủ thông tin!')
+    if (event.target.indication.value === '' || event.target.indicationTypeBefore.value === '' || event.target.indicationTypeAfter.value === '') alert('Vui lòng nhập đầy đủ thông tin!')
     else {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries()); // Convert FormData to an object
         try {
-            const response = await fetch('http://10.17.4.61:3002/data-from-form', {
+            const response = await fetch('http://localhost:3002/data-from-form', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

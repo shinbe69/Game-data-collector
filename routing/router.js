@@ -6,6 +6,7 @@ const { ObjectId } = require('mongodb')
 const Player = require('../models/Player')
 const Indication = require('../models/Indication')
 const IndicationType = require('../models/IndicationType')
+const GameRecord = require('../models/GameRecord')
 
 router.post('/login', async (req, res) => {
     let { username, password } = req.body
@@ -33,9 +34,8 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/data-from-form', async (req, res) => {
-    console.log(req.body.indication, req.body.indicationType, req.body.isDirty)
-
-    let result = await Indication.create({ action: req.body.indication, type: req.body.indicationType, isDirty: req.body.isDirty })
+    console.log(req.body.indication, req.body.indicationTypeBefore, req.body.indicationTypeAfter, req.body.isDirty)
+    let result = await Indication.create({ action: req.body.indication, typeBefore: req.body.indicationTypeBefore, typeAfter: req.body.indicationTypeAfter, isDirty: req.body.isDirty })
     if (result) res.json(result)
     else res.sendStatus(500)
 })
@@ -72,12 +72,14 @@ router.get('/indication', async (req, res) => {
     const indications = await Indication.find({}).lean()
     const indicationTypes = await IndicationType.find({})
     for await (const indication of indications) {
-        const matchIndicationType = indicationTypes.find(item => item._id.equals(indication.type))
-        indication.type_name = matchIndicationType.type
-        indication.before = matchIndicationType.before
-        indication.after = matchIndicationType.after
-        indication.before_explain = matchIndicationType.before_explain
-        indication.after_explain = matchIndicationType.after_explain
+        const indicationTypeBefore = indicationTypes.find(item => item._id.equals(indication.typeBefore))
+        const indicationTypeAfter = indicationTypes.find(item => item._id.equals(indication.typeAfter))
+        indication.typeBefore_name = indicationTypeBefore.type
+        indication.typeAfter_name = indicationTypeAfter.type
+        indication.before = indicationTypeBefore.before
+        indication.after = indicationTypeAfter.after
+        indication.before_explain = indicationTypeBefore.before_explain
+        indication.after_explain = indicationTypeAfter.after_explain
     }
     res.json(indications)
 })
@@ -101,6 +103,17 @@ router.post('/indication/type', async (req, res) => {
         if (createIndicationType) res.sendStatus(201)
         else res.sendStatus(500)
     }
+})
+router.post('/record', async (req, res) => {
+    const {staff_id, game_level, duration, score, total_indications_took} = req.body
+    const createResult = await GameRecord.create({staff_id, game_level, duration, score, total_indications_took})
+    if (createResult) res.sendStatus(200)
+    else res.sendStatus(500)
+})
+router.get('/record', async (req, res) => {
+    const {staff_id} = req.query
+    const staffRecords = await GameRecord.find({staff_id})
+    res.json(staffRecords)
 })
 router.get('/check-health', (req, res) => {
     res.sendStatus(200)
