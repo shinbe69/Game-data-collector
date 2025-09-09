@@ -112,7 +112,8 @@ router.post('/record', async (req, res) => {
 })
 router.get('/record', async (req, res) => {
     const {staff_id} = req.query
-    const staffRecords = await GameRecord.find({staff_id})
+    let staffRecords = await GameRecord.find({staff_id}).lean()
+    staffRecords = staffRecords.map(item => ({...item, createAt: new Date(item.createAt).toLocaleString('en-GB')}))
     res.json(staffRecords)
 })
 router.get('/check-health', (req, res) => {
