@@ -195,7 +195,7 @@
 <script>
     $(document).ready(() => {
       console.log('Script ready...')
-      fetch('http://10.17.4.61:3002/simple-indication')
+      fetch('http://10.17.4.61:3001/simple-indication')
       .then(res => res.json())
       .then(res => {
         res.forEach(singleData => {
@@ -204,7 +204,7 @@
       })
       .catch((err) => console.log('Error:', err))
       //Get indicationType
-      fetch('http://10.17.4.61:3002/indication-type')
+      fetch('http://10.17.4.61:3001/indication-type')
       .then(res => res.json())
       .then(res => {
         res.forEach(singleData => {
@@ -227,7 +227,7 @@
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries()); // Convert FormData to an object
         try {
-            const response = await fetch('http://10.17.4.61:3002/data-from-form', {
+            const response = await fetch('http://10.17.4.61:3001/data-from-form', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
