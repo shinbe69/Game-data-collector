@@ -15,6 +15,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/formnhap.html'))
 })
 
+app.get('/game', (req, res) => {
+    res.sendFile(path.join(__dirname, '/views/Web/index.html'))
+})
 
 isConnected
 .then(() => {
