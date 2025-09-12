@@ -7,7 +7,7 @@ services:
     volumes:
       - ./:/app
     ports:
-      - 3002:3002
+      - 3001:3001
   db:
     image: mongo:7.0.5-jammy
     restart: unless-stopped
