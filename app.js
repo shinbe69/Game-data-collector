@@ -11,12 +11,12 @@ app.use(cors())
 app.use(router)
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
+app.get('/add-indication', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/formnhap.html'))
 })
 
-app.get('/game', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views/Web/index.html'))
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '/index.html'))
 })
 
 isConnected
