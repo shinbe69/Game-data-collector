@@ -194,8 +194,10 @@
 
 <script>
     $(document).ready(() => {
+      // const endpoint = 'https://ksnk.bvhungvuong.vn'
+      const endpoint = 'http://localhost:3001'
       console.log('Script ready...')
-      fetch('https://ksnk.bvhungvuong.vn/simple-indication')
+      fetch(`${endpoint}/simple-indication`)
       .then(res => res.json())
       .then(res => {
         res.forEach(singleData => {
@@ -204,7 +206,7 @@
       })
       .catch((err) => console.log('Error:', err))
       //Get indicationType
-      fetch('https://ksnk.bvhungvuong.vn/indication-type')
+      fetch(`${endpoint}/indication-type`)
       .then(res => res.json())
       .then(res => {
         res.forEach(singleData => {
@@ -227,7 +229,7 @@
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries()); // Convert FormData to an object
         try {
-            const response = await fetch('https://ksnk.bvhungvuong.vn/data-from-form', {
+            const response = await fetch(`${endpoint}/data-from-form`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

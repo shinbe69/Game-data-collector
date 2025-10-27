@@ -71,6 +71,8 @@ router.get('/simple-indication', async (req, res) => {
 router.get('/indication', async (req, res) => {
     const indications = await Indication.find({}).lean()
     const indicationTypes = await IndicationType.find({})
+    const babyRelatedIndications = []
+    const adultRelatedIndications = []
     for await (const indication of indications) {
         const indicationTypeBefore = indicationTypes.find(item => item._id.equals(indication.typeBefore))
         const indicationTypeAfter = indicationTypes.find(item => item._id.equals(indication.typeAfter))
@@ -80,8 +82,12 @@ router.get('/indication', async (req, res) => {
         indication.after = indicationTypeAfter.after
         indication.before_explain = indicationTypeBefore.before_explain
         indication.after_explain = indicationTypeAfter.after_explain
+        if (indication.action.toLocaleLowerCase().includes('bé')) babyRelatedIndications.push(indication)
+        else adultRelatedIndications.push(indication)
     }
-    res.json(indications)
+    const randomInt = Math.round(Math.random())
+    if (randomInt === 1) res.json(babyRelatedIndications)
+    else res.json(adultRelatedIndications)
 })
 router.post('/indication', async (req, res) => {
     const {action, typeId} = req.body;
