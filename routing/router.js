@@ -112,6 +112,7 @@ router.post('/indication/type', async (req, res) => {
 })
 router.post('/record', async (req, res) => {
     const {staff_id, game_level, duration , score, total_indications_took} = req.body
+    console.log('Data:', staff_id, game_level, duration , score, total_indications_took)
     const createResult = await GameRecord.create({staff_id, game_level, duration: (duration * 1), score, total_indications_took})
     if (createResult) res.sendStatus(200)
     else res.sendStatus(500)
